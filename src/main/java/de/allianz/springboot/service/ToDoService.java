@@ -20,8 +20,8 @@ public class ToDoService {
      * Save new ToDo to database
      * @param toDo to create
      */
-    public void createToDo(ToDo toDo) {
-        toDoRepository.save(toDo);
+    public ToDo createToDo(ToDo toDo) {
+        return this.toDoRepository.save(toDo);
     }
 
     /**
@@ -30,13 +30,13 @@ public class ToDoService {
      * Throws exception if providet a null object
      * @param toDo to be updated
      */
-    public  void updateToDo(ToDo toDo) {
-        ToDo updatedToDo = toDoRepository.findById(toDo.getId()).orElseThrow(
+    public  ToDo updateToDo(ToDo toDo) {
+        ToDo updatedToDo = this.toDoRepository.findById(toDo.getId()).orElseThrow(
                 () -> new EntityNotFoundException("TODO NOT FOUND!"));
             updatedToDo.setName(toDo.getName());
             updatedToDo.setDate(toDo.getDate());
             updatedToDo.setStatus(toDo.getStatus());
-            this.toDoRepository.save( updatedToDo);
+            return this.toDoRepository.save( updatedToDo);
     }
 
     /**
@@ -44,7 +44,7 @@ public class ToDoService {
      * @param id used for delete
      */
     public void deleteToDo(Long id) {
-        toDoRepository.deleteById(id);
+        this.toDoRepository.deleteById(id);
     }
 
     /**
@@ -52,7 +52,7 @@ public class ToDoService {
      * @param id used for search
      */
     public ToDo getToDo(Long id) {
-        return toDoRepository.findById(id).orElseThrow(
+        return this.toDoRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("TODO WITH PROVIDED ID NOT FOUND!")
         );
     }
