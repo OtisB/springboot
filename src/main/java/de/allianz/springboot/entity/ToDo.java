@@ -20,6 +20,6 @@ public class ToDo {
     private Long Id;
     private String name;
     private String date;
-    private Boolean state;
+    private Boolean status;
 
 }
