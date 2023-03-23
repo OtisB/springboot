@@ -6,6 +6,7 @@ import de.allianz.springboot.entity.ToDo;
 import de.allianz.springboot.service.ToDoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,33 +17,29 @@ import java.util.List;
 public class ToDoController {
 
     private final ToDoService toDoService;
+    private final ModelMapper modelMapper;
 
     /**
-     *
-     * @param toDoCreateDTO
-     * @return
+     * Saves a new Todo to DB
+     * @param toDoCreateDTO used for validation
+     * @return New ToDo for further usage
      */
     @PostMapping
     public ToDo create(@Valid @RequestBody ToDoCreateDTO toDoCreateDTO)
     {
-        ToDo toDo = new ToDo();
-        toDo.setName(toDoCreateDTO.getName());
-        toDo.setDate(toDoCreateDTO.getDate());
-        toDo.setStatus(toDoCreateDTO.getStatus());
-        return this.toDoService.createToDo(toDo);
+        return this.toDoService.createToDo(modelMapper.map(toDoCreateDTO, ToDo.class));
     }
 
     /**
-     *
-     * @param toDoUpdateDTO
-     * @return
+     * Updates ToDo wich matches to DTOs id
+     * * @param toDoUpdateDTO used for validation
+     * @return Updated or new ToDo for further usage
      */
     @PutMapping
     public ToDo update(@Valid @RequestBody ToDoUpdateDTO toDoUpdateDTO)
     {
         ToDo toDo = toDoService.getToDo(toDoUpdateDTO.getId());
-        toDo.setDate(toDoUpdateDTO.getDate());
-        toDo.setStatus(toDoUpdateDTO.getStatus());
+        this.modelMapper.map(toDoUpdateDTO, toDo);
         return this.toDoService.updateToDo(toDo);
     }
 
