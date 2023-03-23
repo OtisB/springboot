@@ -1,6 +1,7 @@
 package de.allianz.springboot.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @RequiredArgsConstructor
@@ -12,5 +13,8 @@ public class ToDoCreateDTO {
 
     @NotBlank(message = "date is mandatory")
     private final String date;
+
+    @NotNull
+    private final Boolean status = false;
 
 }
