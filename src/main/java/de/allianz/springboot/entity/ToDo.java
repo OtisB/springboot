@@ -18,8 +18,10 @@ public class ToDo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
+
     private String name;
     private String date;
+
     private Boolean status;
 
 }

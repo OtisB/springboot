@@ -1,7 +1,10 @@
 package de.allianz.springboot.controller;
 
+import de.allianz.springboot.dto.ToDoCreateDTO;
+import de.allianz.springboot.dto.ToDoUpdateDTO;
 import de.allianz.springboot.entity.ToDo;
 import de.allianz.springboot.service.ToDoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,12 +18,22 @@ public class ToDoController {
     private final ToDoService toDoService;
 
     @PostMapping
-    public ToDo create(@RequestBody ToDo toDo) {
+    public ToDo create(@Valid @RequestBody ToDoCreateDTO toDoCreateDTO)
+    {
+        ToDo toDo = new ToDo();
+        toDo.setName(toDoCreateDTO.getName());
+        toDo.setDate(toDoCreateDTO.getDate());
         return this.toDoService.createToDo(toDo);
     }
 
     @PutMapping
-    public ToDo update(@RequestBody ToDo toDo) {
+    public ToDo update(@Valid @RequestBody ToDoUpdateDTO toDoUpdateDTO)
+    {
+        ToDo toDo = new ToDo();
+        toDo.setId(toDoUpdateDTO.getId());
+        toDo.setName(toDoUpdateDTO.getName());
+        toDo.setDate(toDoUpdateDTO.getDate());
+        toDo.setStatus(toDoUpdateDTO.getStatus());
         return this.toDoService.updateToDo(toDo);
     }
 

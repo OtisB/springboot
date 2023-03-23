@@ -19,6 +19,7 @@ public class ToDoService {
     /**
      * Save new ToDo to database
      * @param toDo to create
+     * @return The new created Todo object for further usage
      */
     public ToDo createToDo(ToDo toDo) {
         return this.toDoRepository.save(toDo);
@@ -27,8 +28,15 @@ public class ToDoService {
     /**
      * Checks Updates all fields of existing ToDo
      * If no ToDo with given id is found, a new ToDo will be created
-     * Throws exception if providet a null object
+     * Throws exception if provided a null object
      * @param toDo to be updated
+     */
+    /**
+     * Checks Updates all fields of existing ToDo
+     * If no ToDo with given id is found, a new ToDo will be created
+     * Throws exception if provided a null object
+     * @param toDo to be updated
+     * @return Updated or new created ToDo for further usage
      */
     public  ToDo updateToDo(ToDo toDo) {
         ToDo updatedToDo = this.toDoRepository.findById(toDo.getId()).orElseThrow(
