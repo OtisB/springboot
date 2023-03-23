@@ -7,9 +7,13 @@ import de.allianz.springboot.service.ToDoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.http.ResponseEntity.notFound;
 
 @RestController
 @RequestMapping("/todos")
@@ -25,9 +29,9 @@ public class ToDoController {
      * @return New ToDo for further usage
      */
     @PostMapping
-    public ToDo create(@Valid @RequestBody ToDoCreateDTO toDoCreateDTO)
+    public ResponseEntity<ToDo> create(@Valid @RequestBody ToDoCreateDTO toDoCreateDTO)
     {
-        return this.toDoService.createToDo(modelMapper.map(toDoCreateDTO, ToDo.class));
+        return new ResponseEntity<>(this.toDoService.createToDo(modelMapper.map(toDoCreateDTO, ToDo.class)), HttpStatus.CREATED);
     }
 
     /**
@@ -36,11 +40,11 @@ public class ToDoController {
      * @return Updated or new ToDo for further usage
      */
     @PutMapping
-    public ToDo update(@Valid @RequestBody ToDoUpdateDTO toDoUpdateDTO)
+    public ResponseEntity<ToDo> update(@Valid @RequestBody ToDoUpdateDTO toDoUpdateDTO)
     {
         ToDo toDo = toDoService.getToDo(toDoUpdateDTO.getId());
         this.modelMapper.map(toDoUpdateDTO, toDo);
-        return this.toDoService.updateToDo(toDo);
+        return new ResponseEntity<>(this.toDoService.updateToDo(toDo), HttpStatus.OK);
     }
 
     /**
@@ -48,8 +52,9 @@ public class ToDoController {
      * @param id
      */
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         this.toDoService.deleteToDo(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -58,8 +63,8 @@ public class ToDoController {
      * @return
      */
     @GetMapping("/{id}")
-    public ToDo getById(@PathVariable("id") Long id) {
-        return this.toDoService.getToDo(id);
+    public ResponseEntity<ToDo> getById(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(this.toDoService.getToDo(id), HttpStatus.OK);
     }
 
     /**
@@ -67,8 +72,9 @@ public class ToDoController {
      * @return
      */
     @GetMapping
-    public List<ToDo> getAll() {
-        return this.toDoService.getAllToDos();
+    public ResponseEntity<List<ToDo>> getAll() {
+
+        return new ResponseEntity<>(this.toDoService.getAllToDos(), HttpStatus.OK);
     }
 
     /**
@@ -76,8 +82,9 @@ public class ToDoController {
      * @return
      */
     @GetMapping("/completed")
-    public List<ToDo> getAllByStatusIsTrue() {
-        return this.toDoService.getAllCompletedToDos();
+    public ResponseEntity<List<ToDo>> getAllByStatusIsTrue() {
+
+        return new ResponseEntity<>(this.toDoService.getAllCompletedToDos(), HttpStatus.OK);
     }
 
     /**
@@ -85,8 +92,8 @@ public class ToDoController {
      * @return
      */
     @GetMapping("/uncompleted")
-    public List<ToDo> getAllByStatusIsFalse() {
-        return this.toDoService.getAllUncompletedToDos();
+    public ResponseEntity<List<ToDo>> getAllByStatusIsFalse() {
+        return new ResponseEntity<>(this.toDoService.getAllUncompletedToDos(), HttpStatus.OK);
     }
 
     /**
@@ -94,8 +101,8 @@ public class ToDoController {
      * @return
      */
     @GetMapping("/count-completed")
-    public Long countAllCompletedToDos() {
-        return this.toDoService.countAllCompletedToDos();
+    public ResponseEntity<Long> countAllCompletedToDos() {
+        return new ResponseEntity<>(this.toDoService.countAllCompletedToDos(), HttpStatus.OK);
     }
 
     /**
@@ -103,8 +110,9 @@ public class ToDoController {
      * @return
      */
     @GetMapping("/count-uncompleted")
-    public Long countAllUncompletedToDos() {
-        return this.toDoService.countAllUncompletedToDos();
+    public ResponseEntity<Long> countAllUncompletedToDos() {
+
+        return new ResponseEntity<>(this.toDoService.countAllUncompletedToDos(), HttpStatus.OK);
     }
 
 
