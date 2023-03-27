@@ -17,7 +17,7 @@ public interface ToDoRepository extends CrudRepository<ToDo, Long> {
     @Query(value = "SELECT COUNT(*) FROM ToDo WHERE status = true", nativeQuery = true)
     Long manualCountAllByStatusIsTrue();
 
-    //derived methods
+    //derived methods/ inferred query
     //SpringBoot generates SQL queries for you
      List<ToDo> findAllByStatusIsTrue();
      List<ToDo> findAllByStatusIsFalse();

@@ -30,12 +30,6 @@ public class ToDoService {
      * If no ToDo with given id is found, a new ToDo will be created
      * Throws exception if provided a null object
      * @param toDo to be updated
-     */
-    /**
-     * Checks Updates all fields of existing ToDo
-     * If no ToDo with given id is found, a new ToDo will be created
-     * Throws exception if provided a null object
-     * @param toDo to be updated
      * @return Updated or new created ToDo for further usage
      */
     public  ToDo updateToDo(ToDo toDo) {
