@@ -19,8 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
 class ToDoControllerTest {
@@ -46,7 +45,7 @@ class ToDoControllerTest {
         todo2 = new ToDo(2L, "learn Spring", "21.03.2023", false);
         todo3 = new ToDo(3L, "Allianz", "01.04.2023", false);
 
-        this.todos = Arrays.asList(todo1, todo2,todo3);
+        this.todos = Arrays.asList(todo1, todo2, todo3);
     }
 
     @Test
@@ -58,52 +57,52 @@ class ToDoControllerTest {
         this.mockMvc.perform(get("/todos"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(
-                    """
-                        [
-                            {
-                                "name": "learn Java basics",
-                                "date": "01.03.2023",
-                                "status": true,
-                                "id": 1
-                            },
-                            {
-                                "name": "learn Spring",
-                                "date": "21.03.2023",
-                                "status": false,
-                                "id": 2
-                            },
-                            {
-                                "name": "Allianz",
-                                "date": "01.04.2023",
-                                "status": false,
-                                "id": 3
-                            }
-                        ]
-                    
-                    """
+                        """
+                                    [
+                                        {
+                                            "name": "learn Java basics",
+                                            "date": "01.03.2023",
+                                            "status": true,
+                                            "id": 1
+                                        },
+                                        {
+                                            "name": "learn Spring",
+                                            "date": "21.03.2023",
+                                            "status": false,
+                                            "id": 2
+                                        },
+                                        {
+                                            "name": "Allianz",
+                                            "date": "01.04.2023",
+                                            "status": false,
+                                            "id": 3
+                                        }
+                                    ]
+                                                    
+                                """
                 ));
     }
 
     @Test
-    void shouldCreateToDo() throws Exception{
+    void shouldCreateToDo() throws Exception {
 
         ToDo toDo4 = new ToDo(4L, "Workout", "29.02.2024", false);
 
         when(this.toDoService.createToDo(any())).thenReturn(toDo4);
 
         this.mockMvc.perform(
-                post("/todos")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                                """
-                                        {
-                                                "name": "Workout",
-                                                "date": "29.02.2024",
-                                                "status": false,
-                                                "id": null
-                                        }
+                        post("/todos")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
                                         """
-                        ))
+                                                {
+                                                        "name": "Workout",
+                                                        "date": "29.02.2024",
+                                                        "status": false,
+                                                        "id": null
+                                                }
+                                                """
+                                ))
                 .andExpect(status().isCreated());
     }
 
@@ -122,6 +121,47 @@ class ToDoControllerTest {
                                                  "status": true,
                                                  "id": 1
                                              }
+                                """
+                ));
+    }
+
+    @Test
+    public void shouldDeleteToDoById() throws Exception {
+
+        this.mockMvc.perform(delete("/todos/3"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void shouldUpdateToDo() throws Exception {
+
+        ToDo updatedToDo = new ToDo(2L, "learn Spring", "21.03.2023", true);
+
+        when(this.toDoService.getToDo(any(Long.class))).thenReturn(todo2);
+        when(this.toDoService.updateToDo(any(ToDo.class))).thenReturn(updatedToDo);
+        when(this.modelMapper.map(any(), any())).thenReturn(updatedToDo);
+
+        this.mockMvc.perform(put("/todos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """
+                                        {
+                                            "name": "learn Spring",
+                                            "date": "21.03.2023",
+                                            "status": true,
+                                            "id": 2
+                                        }
+                                        """
+                        ))
+                .andExpect(status().isOk())
+                .andExpect(content().json(
+                        """
+                                {
+                                    "name": "learn Spring",
+                                    "date": "21.03.2023",
+                                    "status": true,
+                                    "id": 2
+                                }
                                 """
                 ));
     }
