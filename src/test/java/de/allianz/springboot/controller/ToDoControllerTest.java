@@ -4,13 +4,15 @@ import de.allianz.springboot.entity.ToDo;
 import de.allianz.springboot.service.ToDoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 
 import java.util.Arrays;
@@ -20,7 +22,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
 @WebMvcTest
 class ToDoControllerTest {
 
@@ -30,23 +31,31 @@ class ToDoControllerTest {
     @MockBean
     private ToDoService toDoService;
 
+    //Although ModelMapper isn't used here, Controllers constructor use it, so it is needed here
+    @MockBean
+    private ModelMapper modelMapper;
+
+    private ToDo todo1;
+    private ToDo todo2;
+    private ToDo todo3;
     private List<ToDo> todos;
 
     @BeforeEach
     public void init() {
-        this.todos = Arrays.asList(
-        new ToDo(1L, "learn Java basics", "01.03.2023", true),
-        new ToDo(2L, "learn Spring", "21.03.2023", false),
-        new ToDo(3L, "Allianz", "01.04.2023", false)
-        );
+        todo1 = new ToDo(1L, "learn Java basics", "01.03.2023", true);
+        todo2 = new ToDo(2L, "learn Spring", "21.03.2023", false);
+        todo3 = new ToDo(3L, "Allianz", "01.04.2023", false);
+
+        this.todos = Arrays.asList(todo1, todo2,todo3);
     }
 
     @Test
     void shouldGetAllToDos() throws Exception {
-        when(toDoService.getAllToDos()).thenReturn(this.todos);
 
-        this.mockMvc.perform(MockMvcRequestBuilders
-                .get("/todos"))
+        //Simulates service would provide us with todos when called
+        when(this.toDoService.getAllToDos()).thenReturn(this.todos);
+
+        this.mockMvc.perform(get("/todos"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(
                     """
@@ -72,6 +81,48 @@ class ToDoControllerTest {
                         ]
                     
                     """
+                ));
+    }
+
+    @Test
+    void shouldCreateToDo() throws Exception{
+
+        ToDo toDo4 = new ToDo(4L, "Workout", "29.02.2024", false);
+
+        when(this.toDoService.createToDo(any())).thenReturn(toDo4);
+
+        this.mockMvc.perform(
+                post("/todos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """
+                                        {
+                                                "name": "Workout",
+                                                "date": "29.02.2024",
+                                                "status": false,
+                                                "id": null
+                                        }
+                                        """
+                        ))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    public void shouldFindToDoById() throws Exception {
+
+        when(this.toDoService.getToDo(any(Long.class))).thenReturn(todo1);
+
+        this.mockMvc.perform(get("/todos/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(
+                        """
+                                {
+                                                 "name": "learn Java basics",
+                                                 "date": "01.03.2023",
+                                                 "status": true,
+                                                 "id": 1
+                                             }
+                                """
                 ));
     }
 }

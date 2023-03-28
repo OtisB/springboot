@@ -31,7 +31,4 @@ class ToDoServiceTest {
 
        assertThrows(EntityNotFoundException.class, () -> toDoService.getToDo(1L));
     }
-
-    //ToDo
-    //UpdateToDo
 }
