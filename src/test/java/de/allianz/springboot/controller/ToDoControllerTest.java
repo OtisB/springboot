@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 
@@ -21,7 +23,8 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest
+
+@WebMvcTest(ToDoController.class)
 class ToDoControllerTest {
 
     @Autowired
@@ -30,7 +33,6 @@ class ToDoControllerTest {
     @MockBean
     private ToDoService toDoService;
 
-    //Although ModelMapper isn't used here, Controllers constructor use it, so it is needed here
     @MockBean
     private ModelMapper modelMapper;
 
@@ -49,6 +51,7 @@ class ToDoControllerTest {
     }
 
     @Test
+    @WithMockUser
     void shouldGetAllToDos() throws Exception {
 
         //Simulates service would provide us with todos when called
@@ -84,6 +87,7 @@ class ToDoControllerTest {
     }
 
     @Test
+    @WithMockUser
     void shouldCreateToDo() throws Exception {
 
         ToDo toDo4 = new ToDo(4L, "Workout", "29.02.2024", false);
@@ -92,6 +96,7 @@ class ToDoControllerTest {
 
         this.mockMvc.perform(
                         post("/todos")
+                                .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
                                         """
@@ -107,6 +112,7 @@ class ToDoControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void shouldFindToDoById() throws Exception {
 
         when(this.toDoService.getToDo(any(Long.class))).thenReturn(todo1);
@@ -126,13 +132,16 @@ class ToDoControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void shouldDeleteToDoById() throws Exception {
 
-        this.mockMvc.perform(delete("/todos/3"))
+        this.mockMvc.perform(delete("/todos/3")
+                        .with(csrf()))
                 .andExpect(status().isNoContent());
     }
 
     @Test
+    @WithMockUser
     public void shouldUpdateToDo() throws Exception {
 
         ToDo updatedToDo = new ToDo(2L, "learn Spring", "21.03.2023", true);
@@ -142,6 +151,7 @@ class ToDoControllerTest {
         when(this.modelMapper.map(any(), any())).thenReturn(updatedToDo);
 
         this.mockMvc.perform(put("/todos")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 """
