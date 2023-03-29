@@ -1,6 +1,7 @@
 package de.allianz.springboot.service;
 
 import de.allianz.springboot.config.PasswordEncoderConfig;
+import de.allianz.springboot.entity.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,13 +21,20 @@ public class UserDetailService {
         UserDetails user = User.builder()
                 .username("user")
                 .password("{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW")
-                .roles("USER")
+                .authorities(Role.MEMBER.getGrantedAuthorities())
                 .build();
+
         UserDetails admin = User.builder()
                 .username("admin")
                 .password("{noop}admin-password")
-                .roles("USER", "ADMIN")
+                .authorities(Role.ADMIN.getGrantedAuthorities())
                 .build();
-        return new InMemoryUserDetailsManager(user, admin);
+
+        UserDetails analyst = User.builder()
+                .username("analyst")
+                .password("{noop}analyst-password")
+                .authorities(Role.ANALYST.getGrantedAuthorities())
+                .build();
+        return new InMemoryUserDetailsManager(user, analyst);
     }
 }
