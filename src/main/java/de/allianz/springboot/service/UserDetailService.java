@@ -35,6 +35,6 @@ public class UserDetailService {
                 .password("{noop}analyst-password")
                 .authorities(Role.ANALYST.getGrantedAuthorities())
                 .build();
-        return new InMemoryUserDetailsManager(user, analyst);
+        return new InMemoryUserDetailsManager(user, admin, analyst);
     }
 }
